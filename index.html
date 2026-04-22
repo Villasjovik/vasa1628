@@ -766,9 +766,17 @@ position:relative;overflow:hidden;transition:color .35s}
       </div>
       <span class="h-x">x</span>
       <div class="h-side h-side-r">
-        <div class="hero-logo-brand hero-norre"
-             style="width:42vw;height:18vw;max-width:520px;max-height:200px;display:flex;align-items:center;justify-content:center">
-          <img src="./norremarks.svg" alt="Norremarks" style="width:100%;height:auto;max-height:100%;filter:drop-shadow(0 4px 20px rgba(0,0,0,.4)) drop-shadow(0 0 40px rgba(202,165,100,.15))">
+        <div class="logo-3d hero-logo-brand hero-norre"
+             data-svg="./norremarks-3d.svg"
+             data-material="gold"
+             data-motion="float-spin"
+             data-rotate-speed="0.3"
+             data-bevel-depth="26"
+             data-sparks="true"
+             data-shadow="true"
+             data-shadow-y="-160"
+             data-delay="0.3"
+             style="width:46vw;height:18vw;max-width:560px;max-height:200px">
         </div>
       </div>
     </div>
@@ -919,6 +927,7 @@ position:relative;overflow:hidden;transition:color .35s}
         <h3 class="price-title">Tre spår</h3>
         <p class="price-sub">3 videor · 6 stories med CTA · 30 miljöbilder</p>
         <p class="price-total-lbl">Pris</p>
+        <p class="price-orig">ord. 55 500 kr</p>
         <p class="price-total">39 000</p>
         <span class="price-unit">SEK &middot; exkl. moms</span>
         <div class="price-includes">
@@ -952,6 +961,108 @@ position:relative;overflow:hidden;transition:color .35s}
         <a class="mag-btn filled ch" href="mailto:kontakt@villasjovik.se?subject=Norremarks%20%C3%97%20Villa%20Sj%C3%B6vik%20%E2%80%94%20Samarbete%202026">
           <span>Skicka mail &rarr;</span>
         </a>
+      </div>
+      <div class="mag-w">
+        <button class="mag-btn ghost ch" type="button" id="bk-open" aria-expanded="false" aria-controls="bk-panel">
+          <span>Boka möte</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- BOKNINGSFLOW -->
+    <div class="bk-wrap">
+      <div class="bk-panel" id="bk-panel" role="region" aria-label="Bokningsflow" aria-hidden="true">
+        <div class="bk-card">
+          <div class="bk-head">
+            <h3 class="bk-title">Boka ett <em>digitalt möte</em></h3>
+            <button class="bk-close ch" type="button" id="bk-close" aria-label="Stäng">×</button>
+          </div>
+
+          <div class="bk-steps" role="tablist">
+            <div class="bk-step active" data-step="1"><span class="bk-dot"></span><span>Datum</span></div>
+            <div class="bk-sep"></div>
+            <div class="bk-step" data-step="2"><span class="bk-dot"></span><span>Tid</span></div>
+            <div class="bk-sep"></div>
+            <div class="bk-step" data-step="3"><span class="bk-dot"></span><span>Uppgifter</span></div>
+          </div>
+
+          <!-- STAGE 1: DATUM -->
+          <div class="bk-stage active" data-stage="1">
+            <h3>Välj datum</h3>
+            <p class="bk-sub">Digitalt möte via Google Meet — 30 min. Länk skickas med bekräftelsen.</p>
+            <div class="bk-cal-head">
+              <span class="bk-cal-month" id="bk-cal-month"></span>
+              <div class="bk-cal-nav">
+                <button class="bk-cal-btn ch" type="button" id="bk-cal-prev" aria-label="Föregående månad">‹</button>
+                <button class="bk-cal-btn ch" type="button" id="bk-cal-next" aria-label="Nästa månad">›</button>
+              </div>
+            </div>
+            <div class="bk-cal-grid" id="bk-cal-grid"></div>
+            <div class="bk-nav">
+              <button class="bk-btn ghost ch" type="button" id="bk-cancel">Avbryt</button>
+              <button class="bk-btn primary ch" type="button" id="bk-to-time" disabled>Välj tid →</button>
+            </div>
+          </div>
+
+          <!-- STAGE 2: TID -->
+          <div class="bk-stage" data-stage="2">
+            <h3>Välj tid</h3>
+            <p class="bk-sub">Alla tider i svensk tid (CET/CEST).</p>
+            <div class="bk-sel-date" id="bk-sel-date"></div>
+            <div class="bk-slots" id="bk-slots">
+              <button class="bk-slot ch" type="button" data-time="09:00">09:00</button>
+              <button class="bk-slot ch" type="button" data-time="10:00">10:00</button>
+              <button class="bk-slot ch" type="button" data-time="11:00">11:00</button>
+              <button class="bk-slot ch" type="button" data-time="13:00">13:00</button>
+              <button class="bk-slot ch" type="button" data-time="14:00">14:00</button>
+              <button class="bk-slot ch" type="button" data-time="15:00">15:00</button>
+              <button class="bk-slot ch" type="button" data-time="16:00">16:00</button>
+              <button class="bk-slot ch" type="button" data-time="17:00">17:00</button>
+            </div>
+            <div class="bk-nav">
+              <button class="bk-btn ghost ch" type="button" data-back="1">← Tillbaka</button>
+              <button class="bk-btn primary ch" type="button" id="bk-to-form" disabled>Fortsätt →</button>
+            </div>
+          </div>
+
+          <!-- STAGE 3: UPPGIFTER -->
+          <div class="bk-stage" data-stage="3">
+            <h3>Dina uppgifter</h3>
+            <p class="bk-sub">Jag bekräftar bokningen inom 24h.</p>
+            <div class="bk-summary" id="bk-summary"></div>
+            <div class="bk-error" id="bk-err" style="display:none"></div>
+            <form class="bk-form" id="bk-form" novalidate>
+              <div class="bk-field">
+                <label for="bk-name">Namn</label>
+                <input type="text" id="bk-name" name="name" placeholder="För- och efternamn" required autocomplete="name">
+              </div>
+              <div class="bk-field">
+                <label for="bk-email">E-post</label>
+                <input type="email" id="bk-email" name="email" placeholder="namn@norremarks.se" required autocomplete="email">
+              </div>
+              <div class="bk-field bk-full">
+                <label for="bk-msg">Något du vill dela innan mötet? <span style="opacity:.5;text-transform:none;letter-spacing:0">(valfritt)</span></label>
+                <textarea id="bk-msg" name="message" placeholder="Några tankar, frågor eller önskemål — annars tas det på mötet."></textarea>
+              </div>
+            </form>
+            <div class="bk-nav">
+              <button class="bk-btn ghost ch" type="button" data-back="2">← Tillbaka</button>
+              <button class="bk-btn primary ch" type="button" id="bk-submit">Skicka bokning →</button>
+            </div>
+          </div>
+
+          <!-- STAGE 4: SUCCESS -->
+          <div class="bk-stage" data-stage="4">
+            <div class="bk-done">
+              <div class="bk-done-icon">✓</div>
+              <h3>Tack — <em>bokningen är skickad.</em></h3>
+              <p id="bk-done-text">Jag återkommer inom 24h med en kalenderinbjudan och bekräftelse på tiden.</p>
+            </div>
+            <div class="bk-nav" style="justify-content:center;border-top:none;padding-top:8px">
+              <button class="bk-btn ghost ch" type="button" id="bk-done-close">Stäng</button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -1221,6 +1332,250 @@ if(spotSec){
     if(e.key==='ArrowDown'&&current<sections.length-1){e.preventDefault();sections[current+1].el.scrollIntoView({behavior:'smooth'})}
     if(e.key==='ArrowUp'&&current>0){e.preventDefault();sections[current-1].el.scrollIntoView({behavior:'smooth'})}
   });
+})();
+
+/* ══ BOKNINGSFLOW ══════════════════════════════════ */
+(function(){
+  const SV_MONTHS=['januari','februari','mars','april','maj','juni','juli','augusti','september','oktober','november','december'];
+  const SV_DAYS_SHORT=['må','ti','on','to','fr','lö','sö'];
+  const SV_DAYS_LONG=['söndag','måndag','tisdag','onsdag','torsdag','fredag','lördag'];
+  const RECIPIENT='lucasnorberg3@gmail.com';
+
+  const panel=document.getElementById('bk-panel');
+  const openBtn=document.getElementById('bk-open');
+  const closeBtn=document.getElementById('bk-close');
+  const cancelBtn=document.getElementById('bk-cancel');
+  const doneCloseBtn=document.getElementById('bk-done-close');
+  if(!panel||!openBtn) return;
+
+  const stages=panel.querySelectorAll('.bk-stage');
+  const steps=panel.querySelectorAll('.bk-step');
+  const monthLbl=document.getElementById('bk-cal-month');
+  const calGrid=document.getElementById('bk-cal-grid');
+  const prevBtn=document.getElementById('bk-cal-prev');
+  const nextBtn=document.getElementById('bk-cal-next');
+  const toTimeBtn=document.getElementById('bk-to-time');
+  const selDateEl=document.getElementById('bk-sel-date');
+  const slotsEl=document.getElementById('bk-slots');
+  const toFormBtn=document.getElementById('bk-to-form');
+  const summaryEl=document.getElementById('bk-summary');
+  const form=document.getElementById('bk-form');
+  const submitBtn=document.getElementById('bk-submit');
+  const errEl=document.getElementById('bk-err');
+  const doneText=document.getElementById('bk-done-text');
+  const backBtns=panel.querySelectorAll('[data-back]');
+
+  const state={stage:1,viewY:0,viewM:0,selDate:null,selTime:null};
+  const today=new Date();today.setHours(0,0,0,0);
+  state.viewY=today.getFullYear();state.viewM=today.getMonth();
+
+  /* ── Öppna / stäng panel ── */
+  function openPanel(){
+    panel.classList.add('open');panel.setAttribute('aria-hidden','false');
+    openBtn.setAttribute('aria-expanded','true');
+    goStage(1);renderCalendar();
+    setTimeout(()=>{panel.scrollIntoView({behavior:'smooth',block:'center'});},250);
+  }
+  function closePanel(){
+    panel.classList.remove('open');panel.setAttribute('aria-hidden','true');
+    openBtn.setAttribute('aria-expanded','false');
+  }
+  openBtn.addEventListener('click',openPanel);
+  closeBtn.addEventListener('click',closePanel);
+  cancelBtn.addEventListener('click',closePanel);
+  doneCloseBtn.addEventListener('click',()=>{closePanel();resetFlow();});
+
+  /* ── Stage-växling ── */
+  function goStage(n){
+    state.stage=n;
+    stages.forEach(s=>s.classList.toggle('active',+s.dataset.stage===n));
+    steps.forEach(s=>{
+      const sn=+s.dataset.step;
+      s.classList.toggle('active',sn===n);
+      s.classList.toggle('done',sn<n);
+    });
+  }
+  backBtns.forEach(b=>b.addEventListener('click',()=>goStage(+b.dataset.back)));
+
+  /* ── Kalender ── */
+  function renderCalendar(){
+    const y=state.viewY,m=state.viewM;
+    monthLbl.textContent=`${SV_MONTHS[m]} ${y}`;
+
+    const atCurrent=(y===today.getFullYear()&&m===today.getMonth());
+    prevBtn.disabled=atCurrent;
+    const maxDate=new Date(today);maxDate.setMonth(maxDate.getMonth()+3);
+    nextBtn.disabled=(y===maxDate.getFullYear()&&m>=maxDate.getMonth());
+
+    calGrid.innerHTML='';
+    SV_DAYS_SHORT.forEach(d=>{
+      const h=document.createElement('div');h.className='bk-cal-hdr';h.textContent=d;
+      calGrid.appendChild(h);
+    });
+
+    const firstDay=new Date(y,m,1);
+    let startOffset=firstDay.getDay()-1;if(startOffset<0)startOffset=6;
+    for(let i=0;i<startOffset;i++){
+      const e=document.createElement('div');e.className='bk-cal-day empty';
+      calGrid.appendChild(e);
+    }
+    const daysInMonth=new Date(y,m+1,0).getDate();
+    for(let d=1;d<=daysInMonth;d++){
+      const dt=new Date(y,m,d);
+      const btn=document.createElement('button');
+      btn.type='button';btn.className='bk-cal-day ch';btn.textContent=d;
+      const dow=dt.getDay();
+      const isPast=dt<today;
+      const isWeekend=(dow===0||dow===6);
+      const isToday=dt.getTime()===today.getTime();
+      if(isPast)btn.classList.add('disabled');
+      else if(isWeekend)btn.classList.add('weekend');
+      if(isToday)btn.classList.add('today');
+      if(state.selDate&&dt.getTime()===state.selDate.getTime())btn.classList.add('selected');
+
+      if(!isPast&&!isWeekend){
+        btn.addEventListener('click',()=>selectDate(dt));
+      }else{
+        btn.disabled=true;
+      }
+      calGrid.appendChild(btn);
+    }
+  }
+  function selectDate(dt){
+    state.selDate=dt;
+    renderCalendar();
+    toTimeBtn.disabled=false;
+  }
+  prevBtn.addEventListener('click',()=>{
+    state.viewM--;if(state.viewM<0){state.viewM=11;state.viewY--;}
+    renderCalendar();
+  });
+  nextBtn.addEventListener('click',()=>{
+    state.viewM++;if(state.viewM>11){state.viewM=0;state.viewY++;}
+    renderCalendar();
+  });
+
+  toTimeBtn.addEventListener('click',()=>{
+    if(!state.selDate)return;
+    const d=state.selDate;
+    selDateEl.textContent=`${SV_DAYS_LONG[d.getDay()]} ${d.getDate()} ${SV_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    state.selTime=null;
+    slotsEl.querySelectorAll('.bk-slot').forEach(s=>s.classList.remove('selected'));
+    toFormBtn.disabled=true;
+    goStage(2);
+  });
+
+  /* ── Tidsval ── */
+  slotsEl.querySelectorAll('.bk-slot').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      slotsEl.querySelectorAll('.bk-slot').forEach(s=>s.classList.remove('selected'));
+      btn.classList.add('selected');
+      state.selTime=btn.dataset.time;
+      toFormBtn.disabled=false;
+    });
+  });
+
+  toFormBtn.addEventListener('click',()=>{
+    if(!state.selTime)return;
+    const d=state.selDate;
+    summaryEl.innerHTML=`Möte bokas: <b>${SV_DAYS_LONG[d.getDay()]} ${d.getDate()} ${SV_MONTHS[d.getMonth()]}, kl ${state.selTime}</b>`;
+    goStage(3);
+  });
+
+  /* ── Skicka bokning ── */
+  function validate(){
+    let ok=true;
+    ['bk-name','bk-email'].forEach(id=>{
+      const el=document.getElementById(id);
+      const v=(el.value||'').trim();
+      const wrap=el.closest('.bk-field');
+      if(!v){wrap.classList.add('err');ok=false}
+      else wrap.classList.remove('err');
+    });
+    const email=document.getElementById('bk-email');
+    if(email.value&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())){
+      email.closest('.bk-field').classList.add('err');ok=false;
+    }
+    return ok;
+  }
+  form.querySelectorAll('input,textarea').forEach(el=>{
+    el.addEventListener('input',()=>el.closest('.bk-field').classList.remove('err'));
+  });
+
+  submitBtn.addEventListener('click',async ()=>{
+    errEl.style.display='none';
+    if(!validate()){
+      errEl.textContent='Fyll i namn och en giltig e-postadress.';
+      errEl.style.display='block';
+      return;
+    }
+    submitBtn.disabled=true;
+    submitBtn.textContent='Skickar…';
+
+    const d=state.selDate;
+    const dateStr=`${SV_DAYS_LONG[d.getDay()]} ${d.getDate()} ${SV_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+    const payload={
+      _subject:`Ny mötesbokning — ${document.getElementById('bk-name').value.trim()} (Norremarks)`,
+      _template:'table',
+      _captcha:'false',
+      Bokningstyp:'Digitalt möte via Norremarks-pitch',
+      Datum:dateStr,
+      Tid:state.selTime,
+      Namn:document.getElementById('bk-name').value.trim(),
+      Email:document.getElementById('bk-email').value.trim(),
+      Meddelande:document.getElementById('bk-msg').value.trim()||'—',
+      Källa:'Norremarks-pitch (villasjovik.github.io/norremarks)'
+    };
+
+    let sent=false;
+    try{
+      const res=await fetch(`https://formsubmit.co/ajax/${RECIPIENT}`,{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body:JSON.stringify(payload)
+      });
+      const data=await res.json().catch(()=>({}));
+      if(res.ok&&(data.success==='true'||data.success===true)){
+        sent=true;
+      }
+    }catch(err){/* nätverksfel — faller tillbaka till mailto */}
+
+    if(sent){
+      doneText.textContent='Jag återkommer inom 24h med en kalenderinbjudan och bekräftelse på tiden.';
+      goStage(4);
+    }else{
+      const body=
+`Ny mötesbokning (digitalt möte)
+
+Datum: ${dateStr}
+Tid: ${state.selTime}
+
+Namn: ${payload.Namn}
+E-post: ${payload.Email}
+
+Meddelande:
+${payload.Meddelande}
+
+— Skickat via Norremarks-pitch`;
+      const mailto=`mailto:${RECIPIENT}?subject=${encodeURIComponent(payload._subject)}&body=${encodeURIComponent(body)}`;
+      window.location.href=mailto;
+      doneText.textContent='Bokningen öppnas i ditt mailprogram — tryck skicka där för att bekräfta tiden. Jag återkommer inom 24h.';
+      goStage(4);
+    }
+    submitBtn.disabled=false;
+    submitBtn.textContent='Skicka bokning →';
+  });
+
+  function resetFlow(){
+    state.selDate=null;state.selTime=null;
+    state.viewY=today.getFullYear();state.viewM=today.getMonth();
+    toTimeBtn.disabled=true;toFormBtn.disabled=true;
+    form.reset();
+    form.querySelectorAll('.bk-field').forEach(f=>f.classList.remove('err'));
+    slotsEl.querySelectorAll('.bk-slot').forEach(s=>s.classList.remove('selected'));
+    errEl.style.display='none';
+    goStage(1);
+  }
 })();
 
 </script>
