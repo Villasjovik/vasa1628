@@ -9,9 +9,20 @@
 
 function initBottle(container) {
   const imgPath = container.dataset.img;
-  const nudgeX = parseFloat(container.dataset.nudgeX || '0');
-  const shadowOffset = parseFloat(container.dataset.shadowOffset || '85'); // px above container bottom
+  const rawNudgeX = parseFloat(container.dataset.nudgeX || '0');
   const hasSparks = container.dataset.sparks !== 'false';
+
+  // Mobile stacks logo above bottle vertically → nudgeX pushes bottle off-center.
+  // Disable it on narrow viewports.
+  const IS_MOBILE = window.matchMedia('(max-width:768px)').matches;
+  const nudgeX = IS_MOBILE ? 0 : rawNudgeX;
+
+  // Shadow sits shadowOffset px above container bottom to align with the
+  // Villa Sjövik logo baseline on desktop. On small containers (mobile) we
+  // scale it down so the image isn't crushed.
+  const cH = container.clientHeight || 500;
+  const defaultOffset = cH > 320 ? 85 : Math.round(cH * 0.12);
+  const shadowOffset = parseFloat(container.dataset.shadowOffset || defaultOffset);
 
   // Reset container
   container.innerHTML = '';
