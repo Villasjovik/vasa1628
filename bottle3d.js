@@ -1,5 +1,6 @@
 /**
- * bottle3d.js — 3D bottle: textured box with amber glass sides + Villa Sjövik-like float-spin
+ * bottle3d.js — Real 3D bottle: LatheGeometry glass + inner amber liquid + curved labels + cork
+ * Matches Villa Sjövik float-spin animation.
  */
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
@@ -23,6 +24,22 @@ function mkSparks(scene){
       for(let i=0;i<N&&n>0;i++)if(ag[i]>=lt[i]){pos[i*3]=(Math.random()-.5)*bx.w*1.1;pos[i*3+1]=(Math.random()-.5)*bx.h*1.1;pos[i*3+2]=(Math.random()-.5)*30;dx[i]=(Math.random()-.5)*.4;dy[i]=.15+Math.random()*.45;dz[i]=(Math.random()-.5)*.3;lt[i]=1.2+Math.random()*1.5;ag[i]=0;n--;}}
     for(let i=0;i<N;i++){if(ag[i]<lt[i]){ag[i]+=dt;const t=ag[i]/lt[i];alp[i]=(t<.12?t/.12:1-Math.pow((t-.12)/.88,2))*.5;pos[i*3]+=dx[i]*dt;pos[i*3+1]+=dy[i]*dt;pos[i*3+2]+=dz[i]*dt;}else alp[i]=0;}
     geo.attributes.position.needsUpdate=true;geo.attributes.alpha.needsUpdate=true;};
+}
+
+/* ── CURVED LABEL: PlaneGeometry bent around Y axis ── */
+function makeCurvedLabel(width, height, radius, arc, segments=28){
+  const geo = new THREE.PlaneGeometry(width, height, segments, 1);
+  const pos = geo.attributes.position;
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const t = x / (width / 2);                 // -1 .. +1
+    const angle = t * (arc / 2);               // -arc/2 .. +arc/2
+    pos.setX(i, Math.sin(angle) * radius);
+    pos.setZ(i, Math.cos(angle) * radius);
+  }
+  pos.needsUpdate = true;
+  geo.computeVertexNormals();
+  return geo;
 }
 
 function initBottle3D(container){
@@ -55,9 +72,9 @@ function initBottle3D(container){
 
   scene.environment = new THREE.PMREMGenerator(renderer).fromScene(new RoomEnvironment(), 0.04).texture;
 
-  // Lights — same warm setup as logo3d.js
-  scene.add(new THREE.AmbientLight(0xfff8f0, 0.65));
-  const keyLight = new THREE.DirectionalLight(0xfff2e0, 5.0);
+  // Lights — same warm 3-point as logo3d.js
+  scene.add(new THREE.AmbientLight(0xfff8f0, 0.55));
+  const keyLight = new THREE.DirectionalLight(0xfff2e0, 4.5);
   keyLight.position.set(900, 800, 500);
   keyLight.castShadow = hasShadow;
   if (hasShadow) {
@@ -76,7 +93,7 @@ function initBottle3D(container){
   const fillLight = new THREE.DirectionalLight(0xffeedd, 1.0);
   fillLight.position.set(-500, -200, 400);
   scene.add(fillLight);
-  const rimLight = new THREE.DirectionalLight(0xffd9a5, 1.6);
+  const rimLight = new THREE.DirectionalLight(0xffd9a5, 1.8);
   rimLight.position.set(-400, 400, -600);
   scene.add(rimLight);
 
@@ -90,7 +107,7 @@ function initBottle3D(container){
   const pivot = new THREE.Group();
   scene.add(pivot);
 
-  // Ground shadow plane (same as logo3d.js)
+  // Ground shadow plane
   let shadowPlane = null;
   if (hasShadow) {
     const shadowGeo = new THREE.PlaneGeometry(400, 50);
@@ -113,80 +130,181 @@ function initBottle3D(container){
     scene.add(shadowPlane);
   }
 
+  /* ────────────────────────────────
+     BUILD BOTTLE
+     ──────────────────────────────── */
+  const bottleGroup = new THREE.Group();
+  pivot.add(bottleGroup);
+
+  // Bottle dimensions — tuned to match Vasa1628 silhouette
+  const bH = 520;     // total bottle height
+  const bR = 92;      // max body radius
+
+  // Silhouette profile (normalized radius × height). Y: -1 bottom → +1 top
+  const profile = [
+    [0.00, -1.00],
+    [0.78, -0.99],
+    [0.90, -0.96],
+    [0.97, -0.91],
+    [1.00, -0.82],
+    [1.00,  0.26],   // straight body
+    [0.97,  0.32],   // shoulder start
+    [0.78,  0.40],
+    [0.54,  0.50],
+    [0.40,  0.58],
+    [0.36,  0.62],   // neck start
+    [0.36,  0.84],   // neck straight
+    [0.39,  0.87],   // lip
+    [0.37,  0.90],
+    [0.34,  0.91]    // close top
+  ];
+  const glassPoints = profile.map(([r, y]) =>
+    new THREE.Vector2(Math.max(0.002, r * bR), y * bH / 2)
+  );
+
+  // LIQUID — inner amber, opaque (fills body up to ~70%)
+  const liquidProfile = [];
+  for (const [r, y] of profile) {
+    if (y < 0.25) liquidProfile.push([r * 0.93, y]);
+  }
+  const lastR = liquidProfile[liquidProfile.length - 1][0];
+  liquidProfile.push([lastR, 0.25]);
+  liquidProfile.push([0.001, 0.25]);
+  const liquidPoints = liquidProfile.map(([r, y]) =>
+    new THREE.Vector2(Math.max(0.002, r * bR), y * bH / 2)
+  );
+  const liquidGeo = new THREE.LatheGeometry(liquidPoints, 64);
+  const liquidMat = new THREE.MeshStandardMaterial({
+    color: 0xb0621a,
+    metalness: 0.4,
+    roughness: 0.2,
+    emissive: 0x3d1a04,
+    emissiveIntensity: 0.45
+  });
+  const liquid = new THREE.Mesh(liquidGeo, liquidMat);
+  if (hasShadow) liquid.castShadow = true;
+  bottleGroup.add(liquid);
+
+  // GLASS — semi-transparent amber shell around liquid
+  const glassGeo = new THREE.LatheGeometry(glassPoints, 72);
+  const glassMat = new THREE.MeshPhysicalMaterial({
+    color: 0x3a1c08,
+    metalness: 0.0,
+    roughness: 0.08,
+    clearcoat: 1.0,
+    clearcoatRoughness: 0.05,
+    transparent: true,
+    opacity: 0.55,
+    side: THREE.DoubleSide,
+    envMapIntensity: 1.6,
+    depthWrite: false
+  });
+  const glass = new THREE.Mesh(glassGeo, glassMat);
+  glass.renderOrder = 2;
+  bottleGroup.add(glass);
+
+  // CORK — cylindrical, dark brown wax finish
+  const corkH = bH * 0.095;
+  const corkGeo = new THREE.CylinderGeometry(bR * 0.36, bR * 0.32, corkH, 32);
+  const corkMat = new THREE.MeshStandardMaterial({
+    color: 0x2a1a0c,
+    metalness: 0.2,
+    roughness: 0.62
+  });
+  const cork = new THREE.Mesh(corkGeo, corkMat);
+  cork.position.y = bH * 0.455 + corkH / 2;
+  if (hasShadow) cork.castShadow = true;
+  bottleGroup.add(cork);
+
+  // SUNKEN-band around cork neck — thin beige paper band
+  const bandGeo = new THREE.CylinderGeometry(bR * 0.385, bR * 0.385, bH * 0.042, 32, 1, true);
+  const bandMat = new THREE.MeshStandardMaterial({
+    color: 0xc9b38a,
+    metalness: 0.05,
+    roughness: 0.75,
+    side: THREE.DoubleSide
+  });
+  const band = new THREE.Mesh(bandGeo, bandMat);
+  band.position.y = bH * 0.42;
+  bottleGroup.add(band);
+
+  /* ────────────────────────────────
+     CURVED LABELS (front + back)
+     Texture: crop center of vasa.png (the label region)
+     ──────────────────────────────── */
   let bottleBox = null;
-  let rotAngle = 0;
-  let elapsed = 0;
 
-  // Load bottle texture, build geometry
-  new THREE.TextureLoader().load(imgPath, (texture) => {
-    texture.colorSpace = THREE.SRGBColorSpace;
-    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+  new THREE.TextureLoader().load(imgPath, (tex) => {
+    tex.colorSpace = THREE.SRGBColorSpace;
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
-    const imgW = texture.image.naturalWidth || texture.image.width;
-    const imgH = texture.image.naturalHeight || texture.image.height;
-    const aspect = imgW / imgH; // ~0.73 for the Vasa bottle
+    // vasa.png label region. Image 1916x2633.
+    // Label roughly x:370-1540 (0.193-0.804), y(top):800-1720 (0.304-0.653)
+    // Three.js UV bottom-origin → offset.y = 1 - y_top_bottom = 1 - 0.653 = 0.347
+    const uvX = 0.193, uvW = 0.611;
+    const uvY = 0.347, uvH = 0.349;
 
-    // Size bottle to fit nicely in hero-right
-    // Target visual width ~62% of camera visible width
-    const vFOV = camera.fov * Math.PI / 180;
-    const visH = 2 * Math.tan(vFOV / 2) * camera.position.z;
-    const visW = visH * camera.aspect;
+    const mkLabelMat = (mirror) => {
+      const t = tex.clone();
+      t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      t.wrapS = THREE.ClampToEdgeWrapping;
+      t.wrapT = THREE.ClampToEdgeWrapping;
+      t.repeat.set(mirror ? -uvW : uvW, uvH);
+      t.offset.set(mirror ? uvX + uvW : uvX, uvY);
+      t.needsUpdate = true;
+      return new THREE.MeshStandardMaterial({
+        map: t,
+        metalness: 0.02,
+        roughness: 0.6,
+        side: THREE.FrontSide,
+        transparent: true,
+        alphaTest: 0.05
+      });
+    };
 
-    const fillH = 0.78;
-    const bH = visH * fillH;
-    const bW = bH * aspect;
-    const bD = bW * 0.22; // bottle depth ~22% of width → gives glass-edge on rotation
+    const labelW = bR * 1.75;
+    const labelH = bH * 0.36;
+    const labelArc = Math.PI * 0.58;     // ~104° wrap
+    const labelR = bR * 1.015;           // sit barely outside glass
+    const labelY = -bH * 0.14;
 
-    // Dark amber glass material for sides (matches liquid tone)
-    const amberMat = new THREE.MeshStandardMaterial({
-      color: 0x1a0d05,
-      metalness: 0.45,
-      roughness: 0.28
-    });
-    // Darker for top/bottom (bottle ends are not visible)
-    const endMat = new THREE.MeshStandardMaterial({
-      color: 0x0a0603,
-      metalness: 0.3,
-      roughness: 0.55
-    });
-    // Front + back material use the bottle photo
-    const faceMat = new THREE.MeshStandardMaterial({
-      map: texture,
-      metalness: 0.1,
-      roughness: 0.42,
-      color: 0xffffff
-    });
-    // Back face: mirrored texture so rotation looks symmetric
-    const backTexture = texture.clone();
-    backTexture.wrapS = THREE.RepeatWrapping;
-    backTexture.repeat.x = -1;
-    backTexture.offset.x = 1;
-    backTexture.needsUpdate = true;
-    backTexture.colorSpace = THREE.SRGBColorSpace;
-    const backMat = new THREE.MeshStandardMaterial({
-      map: backTexture,
-      metalness: 0.1,
-      roughness: 0.42,
-      color: 0xffffff
-    });
+    // Front label
+    const frontGeo = makeCurvedLabel(labelW, labelH, labelR, labelArc);
+    const labelFront = new THREE.Mesh(frontGeo, mkLabelMat(false));
+    labelFront.position.y = labelY;
+    labelFront.renderOrder = 1;
+    bottleGroup.add(labelFront);
 
-    // BoxGeometry face order: [+X, -X, +Y, -Y, +Z, -Z] → right, left, top, bottom, front, back
-    const materials = [amberMat, amberMat, endMat, endMat, faceMat, backMat];
-    const geometry = new THREE.BoxGeometry(bW, bH, bD);
-    const bottle = new THREE.Mesh(geometry, materials);
-    if (hasShadow) bottle.castShadow = true;
-    pivot.add(bottle);
+    // Back label — rotate 180° around Y
+    const backGeo = makeCurvedLabel(labelW, labelH, labelR, labelArc);
+    const labelBack = new THREE.Mesh(backGeo, mkLabelMat(true));
+    labelBack.position.y = labelY;
+    labelBack.rotation.y = Math.PI;
+    labelBack.renderOrder = 1;
+    bottleGroup.add(labelBack);
 
-    bottleBox = { w: bW, h: bH };
+    bottleBox = { w: bR * 2.2, h: bH };
 
     if (shadowPlane) {
       shadowPlane.position.y = shadowYAbs != null
         ? parseFloat(shadowYAbs)
         : -bH / 2 - 40 + yOffset;
-      shadowPlane.scale.set(bW / 380, 1, 1);
+      shadowPlane.scale.set(bR * 2 / 380, 1, 1);
     }
   });
 
+  // Immediate bottleBox so sparks fire before texture resolves
+  bottleBox = { w: bR * 2.2, h: bH };
+  if (shadowPlane) {
+    shadowPlane.position.y = shadowYAbs != null
+      ? parseFloat(shadowYAbs)
+      : -bH / 2 - 40 + yOffset;
+    shadowPlane.scale.set(bR * 2 / 380, 1, 1);
+  }
+
+  let rotAngle = 0;
+  let elapsed = 0;
   const clock = new THREE.Clock();
 
   (function loop() {
@@ -194,33 +312,31 @@ function initBottle3D(container){
     const dt = Math.min(clock.getDelta(), 0.05);
     elapsed += dt;
 
-    if (pivot.children.length > 0) {
-      const t = elapsed;
+    const t = elapsed;
 
-      // Variable-speed spin (slow front/back, fast on the sides) — readable bottle face most of the time
-      const angle = rotAngle % (Math.PI * 2);
-      const facing = Math.cos(angle);
-      const tt = Math.max(0, Math.min(1, (0.88 - facing) / 1.45));
-      const fast = tt * tt * tt * (tt * (tt * 6 - 15) + 10);
-      const speedMul = 1.0 + fast * 12.0;
-      rotAngle += rotateSpeed * 0.012 * speedMul;
-      pivot.rotation.y = rotAngle;
+    // Variable-speed spin (slow front/back, fast on the sides) — label readable most of the time
+    const angle = rotAngle % (Math.PI * 2);
+    const facing = Math.cos(angle);
+    const tt = Math.max(0, Math.min(1, (0.88 - facing) / 1.45));
+    const fast = tt * tt * tt * (tt * (tt * 6 - 15) + 10);
+    const speedMul = 1.0 + fast * 12.0;
+    rotAngle += rotateSpeed * 0.012 * speedMul;
+    pivot.rotation.y = rotAngle;
 
-      // Float + subtle tilt matching float-spin pattern
-      const floatY = Math.sin(t * 0.55) * 30 + Math.sin(t * 1.4) * 5;
-      const floatX = Math.sin(t * 0.35) * 8 + Math.sin(t * 0.8) * 2.5;
-      const depthExpansion = Math.abs(Math.sin(rotAngle)) * 12;
-      pivot.position.x = floatX + nudgeX + (nudgeX > 0 ? depthExpansion : -depthExpansion);
-      pivot.position.y = floatY + yOffset;
-      pivot.rotation.x = -0.08 + Math.sin(t * 0.47) * 0.035;
-      pivot.rotation.z = Math.sin(t * 0.31) * 0.022;
-    }
+    // Float + subtle tilt matching Villa Sjövik float-spin
+    const floatY = Math.sin(t * 0.55) * 30 + Math.sin(t * 1.4) * 5;
+    const floatX = Math.sin(t * 0.35) * 8 + Math.sin(t * 0.8) * 2.5;
+    const depthExpansion = Math.abs(Math.sin(rotAngle)) * 12;
+    pivot.position.x = floatX + nudgeX + (nudgeX > 0 ? depthExpansion : -depthExpansion);
+    pivot.position.y = floatY + yOffset;
+    pivot.rotation.x = -0.08 + Math.sin(t * 0.47) * 0.035;
+    pivot.rotation.z = Math.sin(t * 0.31) * 0.022;
 
     if (shadowPlane && bottleBox) {
       const c = Math.cos(rotAngle);
       const rotScale = c * c;
-      const floatY = pivot.position.y;
-      const floatNorm = (floatY + 50) / 100;
+      const floatY2 = pivot.position.y;
+      const floatNorm = (floatY2 + 50) / 100;
       const heightFactor = 1.3 - Math.max(0, Math.min(1, floatNorm)) * 0.6;
       const baseScale = bottleBox.w / 380;
       shadowPlane.position.x = pivot.position.x;

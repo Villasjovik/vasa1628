@@ -2,10 +2,10 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "norremarks",
+      "name": "vasa1628",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4822"],
-      "port": 4822
+      "runtimeArgs": ["-m", "http.server", "4823"],
+      "port": 4823
     }
   ]
 }
