@@ -13,9 +13,11 @@ function initBottle(container) {
   const hasSparks = container.dataset.sparks !== 'false';
 
   // Mobile stacks logo above bottle vertically → nudgeX pushes bottle off-center.
-  // Disable it on narrow viewports.
+  // On narrow viewports apply a small constant left-bias so the bottle reads as
+  // centered (the photo content itself sits ~0.3% right of PNG center).
   const IS_MOBILE = window.matchMedia('(max-width:768px)').matches;
-  const nudgeX = IS_MOBILE ? 0 : rawNudgeX;
+  const nudgeX = IS_MOBILE ? -4 : rawNudgeX;
+  const floatAmp = IS_MOBILE ? 0.45 : 1;
 
   // Shadow sits shadowOffset px above container bottom to align with the
   // Villa Sjövik logo baseline on desktop. On small containers (mobile) we
@@ -146,7 +148,7 @@ function initBottle(container) {
 
     // Float & micro-tilt — same timing family as Villa Sjövik float-spin
     const floatY = Math.sin(t * 0.55) * 10 + Math.sin(t * 1.4) * 2;
-    const floatX = Math.sin(t * 0.35) * 4 + Math.sin(t * 0.8) * 1.2 + nudgeX;
+    const floatX = (Math.sin(t * 0.35) * 4 + Math.sin(t * 0.8) * 1.2) * floatAmp + nudgeX;
     const tiltY = Math.sin(t * 0.47) * 3.5;   // subtle left/right tilt in degrees
     const tiltZ = Math.sin(t * 0.31) * 1.4;   // tiny sway
     const breatheScale = 1 + Math.sin(t * 0.9) * 0.012;
