@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 340" preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0C878"/>
+      <stop offset="35%" stop-color="#D4A84B"/>
+      <stop offset="65%" stop-color="#C4956A"/>
+      <stop offset="100%" stop-color="#D4A84B"/>
+    </linearGradient>
+    <filter id="goldShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.4"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <g filter="url(#goldShadow)">
+    <line x1="60" y1="60" x2="540" y2="60" stroke="url(#goldGrad)" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>
+
+    <text x="300" y="175"
+          text-anchor="middle"
+          font-family="'Trajan Pro','Playfair Display',Georgia,serif"
+          font-size="150"
+          font-weight="600"
+          letter-spacing="28"
+          fill="url(#goldGrad)">VASA</text>
+
+    <line x1="140" y1="215" x2="260" y2="215" stroke="url(#goldGrad)" stroke-width="0.9"/>
+    <circle cx="300" cy="215" r="3.2" fill="url(#goldGrad)"/>
+    <line x1="340" y1="215" x2="460" y2="215" stroke="url(#goldGrad)" stroke-width="0.9"/>
+
+    <text x="300" y="272"
+          text-anchor="middle"
+          font-family="'Playfair Display',Georgia,serif"
+          font-style="italic"
+          font-size="58"
+          font-weight="400"
+          letter-spacing="14"
+          fill="url(#goldGrad)">1628</text>
+
+    <text x="300" y="310"
+          text-anchor="middle"
+          font-family="'Inter','Helvetica Neue',Arial,sans-serif"
+          font-size="12"
+          font-weight="500"
+          letter-spacing="7"
+          fill="url(#goldGrad)"
+          opacity="0.72">SVERIGES ÄLDSTA BRÄNNVIN</text>
+
+    <line x1="60" y1="335" x2="540" y2="335" stroke="url(#goldGrad)" stroke-width="1.4" stroke-linecap="round" opacity="0.6"/>
+  </g>
+</svg>
