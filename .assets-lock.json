@@ -1,0 +1,91 @@
+{
+  "synced_at": "2026-04-26T14:10:24.172Z",
+  "manifest_version": 1,
+  "files": {
+    "husqvarna.svg": {
+      "md5": "048eee5e25f4893f18e294d06bf1648a",
+      "source": "wiki/assets/husqvarna/husqvarna.svg",
+      "brand": "husqvarna"
+    },
+    "husqvarna.jpeg": {
+      "md5": "496c1c47e9a623b7c97a9278b4912f75",
+      "source": "wiki/assets/husqvarna/husqvarna.jpeg",
+      "brand": "husqvarna"
+    },
+    "husqvarna.jpg": {
+      "md5": "496c1c47e9a623b7c97a9278b4912f75",
+      "source": "wiki/assets/husqvarna/husqvarna.jpg",
+      "brand": "husqvarna"
+    },
+    "lexington.svg": {
+      "md5": "6af45bdb652477cc4e1e013ff4f7644b",
+      "source": "wiki/assets/lexington/lexington.svg",
+      "brand": "lexington"
+    },
+    "lexington.png": {
+      "md5": "aab5b46eaea068b129bcb18a68dd3900",
+      "source": "wiki/assets/lexington/lexington.png",
+      "brand": "lexington"
+    },
+    "markslojd.svg": {
+      "md5": "1c8a1f4b96f8e005f9596fad3100528c",
+      "source": "wiki/assets/markslojd/markslojd.svg",
+      "brand": "markslojd"
+    },
+    "markslojd.avif": {
+      "md5": "1fa6a96346ada0c0d81e6eea7f56aff1",
+      "source": "wiki/assets/markslojd/markslojd.avif",
+      "brand": "markslojd"
+    },
+    "mille_notti.svg": {
+      "md5": "cb62e2c2778429fa44756f096eee5e31",
+      "source": "wiki/assets/mille_notti/mille_notti.svg",
+      "brand": "mille_notti"
+    },
+    "mille_notti.avif": {
+      "md5": "4c556eb6fcc05596660c53b8501b8f22",
+      "source": "wiki/assets/mille_notti/mille_notti.avif",
+      "brand": "mille_notti"
+    },
+    "nuura.svg": {
+      "md5": "a849643e8bc657b84063002294594409",
+      "source": "wiki/assets/nuura/nuura.svg",
+      "brand": "nuura"
+    },
+    "nuura.png": {
+      "md5": "81c0177d5d197a5bf0ff17270eb8922f",
+      "source": "wiki/assets/nuura/nuura.png",
+      "brand": "nuura"
+    },
+    "segway.svg": {
+      "md5": "b05c2659b85925fb503d08b3937540a8",
+      "source": "wiki/assets/segway/segway.svg",
+      "brand": "segway"
+    },
+    "segway.png": {
+      "md5": "4c60cb138f6a089f7083286b71355834",
+      "source": "wiki/assets/segway/segway.png",
+      "brand": "segway"
+    },
+    "tinekhome.svg": {
+      "md5": "1808e9a288be44724bf5ba598fd974cb",
+      "source": "wiki/assets/tinekhome/tinekhome.svg",
+      "brand": "tinekhome"
+    },
+    "tinekhome.jpg": {
+      "md5": "2cb9a8340bdd512a8de87f2d782991aa",
+      "source": "wiki/assets/tinekhome/tinekhome.jpg",
+      "brand": "tinekhome"
+    },
+    "vedum.svg": {
+      "md5": "62ec886cf0b062d0e372175e012d8c60",
+      "source": "wiki/assets/vedum/vedum.svg",
+      "brand": "vedum"
+    },
+    "vedum.png": {
+      "md5": "52d5497cdcb669ace92c0878e98b0dad",
+      "source": "wiki/assets/vedum/vedum.png",
+      "brand": "vedum"
+    }
+  }
+}
