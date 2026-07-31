@@ -1,0 +1,7 @@
+# Internt bygg-material — publiceras inte (metadata-hygien 2026-07-30)
+*-logo3d.json
+*-og-gen.mjs
+_preview-server.mjs
+source-material/
+gpt-input/
+.assets-lock.json
